@@ -1,11 +1,6 @@
 import argparse
 import re
-
-
-# Temporary func
-def install_app(args):
-    print("Installing App...")
-    print(args.app_url)
+from commands.install import install_app
 
 
 # Repo cek format repo app
