@@ -1,10 +1,25 @@
 import argparse
+import re
 
 
 # Temporary func
 def install_app(args):
     print("Installing App...")
     print(args.app_url)
+
+
+# Repo cek format repo app
+def repo_type(text):
+    # Regex format owner/repo
+    pattern = r"^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$"
+
+    # Cek jika input tidak sesuai format
+    if not re.match(pattern, text):
+        raise argparse.ArgumentTypeError(
+            "Invalid format {text}, format is 'owner/repo'"
+        )
+
+    return text
 
 
 def main():
@@ -19,7 +34,7 @@ def main():
     install = subparser.add_parser(
         "install", help="Download and install AppImage from Github"
     )
-    install.add_argument("app_url", help="Format: owner/repo")
+    install.add_argument("app_url", help="Format: owner/repo", type=repo_type)
     install.set_defaults(func=install_app)
 
     # Mengambil seluruh parser dari input
