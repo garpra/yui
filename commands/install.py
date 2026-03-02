@@ -6,6 +6,17 @@ def install_app(args):
 
     print(f"\nSearch info AppImage for: {app_url}\n")
 
-    result = get_latest_appimage_data(app_url)
+    # Ambil data versi terbaru dari repo
+    results = get_latest_appimage_data(app_url)
 
-    print(result)
+    # Cek jika ambil data success
+    if not results["success"]:
+        print(f"Failed to get data: {results["status"]}")
+        return
+
+    app_name = results["app_name"]
+    version = results["version"]
+    download_url = results["download_url"]
+
+    print(f"Found: {app_name} {version}")
+    print("Downloading...")
