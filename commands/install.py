@@ -1,4 +1,8 @@
-from helpers.utils import get_latest_appimage_data
+import os
+from helpers.utils import download, get_latest_appimage_data
+
+# Temporary AppImage folder
+APPIMAGE_PATH = os.path.join(".local", "share", "yui", "appimage")
 
 
 def install_app(args):
@@ -20,3 +24,13 @@ def install_app(args):
 
     print(f"Found: {app_name} {version}")
     print("Downloading...")
+
+    # Buat folder jika belum ada
+    os.makedirs(APPIMAGE_PATH, exist_ok=True)
+
+    # Buat path untuk appimage yang di download
+    save_path = os.path.join(APPIMAGE_PATH, app_name)
+
+    # Download AppImage sesuai dengan url dan path
+    download(download_url, save_path)
+    print(f"Download {app_name} successfully")

@@ -43,3 +43,17 @@ def get_latest_appimage_data(app_url: str):
         "download_url": None,
         "status": "AppImage not found",
     }
+
+
+def download(url: str, location: str):
+    try:
+        # Ambil data dari url
+        response = requests.get(url, stream=True, timeout=30)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as err:
+        print(f"Download Error: {err}")
+        return
+
+    # Download dan simpan content dari response
+    with open(location, "wb") as file:
+        file.write(response.content)
