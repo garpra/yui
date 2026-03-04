@@ -2,6 +2,7 @@ import argparse
 import re
 from commands.install import install_app
 from commands.list import list_app
+from commands.update import update_app
 
 
 # Repo cek format repo app
@@ -37,12 +38,18 @@ def main():
     list = subparser.add_parser("list", help="Get all list of app")
     list.set_defaults(func=list_app)
 
+    # Subcommand update
+    update = subparser.add_parser("update", help="Update all app from repository")
+    update.set_defaults(func=update_app)
+
     # Mengambil seluruh parser dari input
     args = parser.parse_args()
 
     # Tampilkan bantuan jika user tidak mengetik Subcommand
     # dengan mengecek jika args ada attribute 'func'
     if args.command == "list":
+        args.func()
+    elif args.command == "update":
         args.func()
     elif hasattr(args, "func"):
         args.func(args)

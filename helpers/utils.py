@@ -9,6 +9,24 @@ APPIMAGE_PATH = os.path.join(ROOT_FOLDER, "appimage")
 REPO_PATH = os.path.join(ROOT_FOLDER, "repos.json")
 
 
+def appimage_exists(app_name: str):
+    app_path = os.path.join(APPIMAGE_PATH, app_name)
+    # Cek jika AppImage yang sesuai dengan url dan versi terbaru
+    if os.path.isfile(app_path):
+        return True
+
+    return False
+
+
+def remove_appimage(app_name: str):
+    remove_path = os.path.join(APPIMAGE_PATH, app_name)
+
+    if os.path.exists(remove_path):
+        os.remove(remove_path)
+    else:
+        print("File already deleted")
+
+
 def get_latest_appimage_data(app_url: str):
 
     url = f"https://api.github.com/repos/{app_url}/releases/latest"
@@ -100,11 +118,6 @@ def download(url: str, app_name: str):
 
     # Buat path untuk appimage yang di download
     save_path = os.path.join(APPIMAGE_PATH, app_name)
-
-    # Cek jika AppImage yang sesuai dengan url dan versi terbaru
-    if os.path.isfile(save_path):
-        print(f"{url} has been downloaded and is the latest version")
-        return
 
     # Download dan simpan content dari response dengan progress
     with open(save_path, "wb") as file:
