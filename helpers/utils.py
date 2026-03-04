@@ -1,4 +1,5 @@
 import requests
+import sys
 
 
 def get_latest_appimage_data(app_url: str):
@@ -45,6 +46,36 @@ def get_latest_appimage_data(app_url: str):
     }
 
 
+# Membuat fungsi untuk progress bar proses download
+def print_progress(downloaded: int, total: int):
+    # Jika total ukuran tidak diketahui
+    if total == 0:
+        # Tampilkan jumlah data yang sudah diunduh dalam KB
+        print(f"\rDownloading... {downloaded / 1024:.1f} KB", end="")
+        return
+
+    # Hitung persentase progress (0 - 100)
+    percent = downloaded / total * 100
+
+    # Tentukan jumlah blok progress bar, Setiap blok mewakili 5%
+    filled = int(percent / 5)
+
+    # Buat string progress bar
+    bar = "█" * filled + "░" * (20 - filled)
+
+    # Konversi byte ke kilobyte untuk tampilan yang lebih dibaca
+    downloaded_kb = downloaded / 1024
+    total_kb = total / 1024
+
+    # Tulis output ke terminal tanpa pindah baris
+    sys.stdout.write(
+        f"\rDownloading [{bar}] {percent:.1f}% ({downloaded_kb:.1f}/{total_kb:.1f} KB)"
+    )
+
+    # Memastikan output langsung muncul
+    sys.stdout.flush()
+
+
 def download(url: str, location: str):
     try:
         # Ambil data dari url
@@ -54,6 +85,14 @@ def download(url: str, location: str):
         print(f"Download Error: {err}")
         return
 
-    # Download dan simpan content dari response
+    total_size = int(response.headers.get("content-length", 0))
+    downloaded = 0
+
+    # Download dan simpan content dari response dengan progress
     with open(location, "wb") as file:
-        file.write(response.content)
+        for chunk in response.iter_content(1024):
+            file.write(chunk)
+            downloaded += len(chunk)
+            print_progress(downloaded, total_size)
+
+    print()
