@@ -3,6 +3,7 @@ import re
 from commands.install import install_app
 from commands.list import list_app
 from commands.update import update_app
+from commands.delete import delete_app
 
 
 # Repo cek format repo app
@@ -41,6 +42,11 @@ def main():
     # Subcommand update
     update = subparser.add_parser("update", help="Update all app from repository")
     update.set_defaults(func=update_app)
+
+    # Subcommand delete
+    delete = subparser.add_parser("delete", help="Delete app from system")
+    delete.add_argument("app_url", help="Format: owner/repo", type=repo_type)
+    delete.set_defaults(func=delete_app)
 
     # Mengambil seluruh parser dari input
     args = parser.parse_args()

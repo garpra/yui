@@ -155,6 +155,18 @@ def update_repository(repo: str, app_name: str, version: str, download_url: str)
         json.dump(data, file, indent=2)
 
 
+def remove_repository(app_url: str):
+    # Ambil data repo
+    data = read_repository()
+
+    # Hapus data repo sesuai dengan 'app_url'
+    data.pop(app_url, "")
+
+    # Update data repo
+    with open(REPO_PATH, "w") as file:
+        json.dump(data, file, indent=2)
+
+
 def get_list_app():
     # Baca data repo
     data = read_repository()
