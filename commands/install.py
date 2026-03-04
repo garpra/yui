@@ -20,6 +20,7 @@ def install_app(args):
         return
 
     app_name = results["app_name"]
+    app_path = results["app_path"]
     version = results["version"]
     download_url = results["download_url"]
 
@@ -31,9 +32,9 @@ def install_app(args):
         return
 
     # Download AppImage sesuai dengan url dan path
-    download(download_url, app_name)
+    download(download_url, app_path)
 
     # Update repository data
-    update_repository(app_url, app_name, version, download_url)
+    update_repository(app_url, app_name, app_path, version, download_url)
 
     print(f"\nDownload {app_name} successfully")

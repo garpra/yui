@@ -28,19 +28,22 @@ def update_app():
         new_version = new_data["version"]
         new_download_url = new_data["download_url"]
         new_app_name = new_data["app_name"]
+        new_app_path = new_data["app_path"]
 
         # Cek jika versi app sudah terbaru
         if repo_version == new_version:
             print(f"{app_url} is latest version")
         else:
             # Hapus appimage lama
-            remove_appimage(data_repo[app_url]["app_name"])
+            remove_appimage(data_repo[app_url]["app_path"])
 
             # Update app ke versi terbaru
             print(f"Updating {app_url} {new_version}:")
-            download(new_download_url, new_app_name)
+            download(new_download_url, new_app_path)
 
             # Update repository data
-            update_repository(app_url, new_app_name, new_version, new_download_url)
+            update_repository(
+                app_url, new_app_name, new_app_path, new_version, new_download_url
+            )
 
     print("\nUpdate all application finished")

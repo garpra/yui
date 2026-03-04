@@ -18,11 +18,9 @@ def appimage_exists(app_name: str):
     return False
 
 
-def remove_appimage(app_name: str):
-    remove_path = os.path.join(APPIMAGE_PATH, app_name)
-
-    if os.path.exists(remove_path):
-        os.remove(remove_path)
+def remove_appimage(app_path: str):
+    if os.path.exists(app_path):
+        os.remove(app_path)
     else:
         print("File already deleted")
 
@@ -40,6 +38,7 @@ def get_latest_appimage_data(app_url: str):
         return {
             "success": False,
             "app_name": None,
+            "app_path": None,
             "version": None,
             "download_url": None,
             "status": str(err),
@@ -54,9 +53,11 @@ def get_latest_appimage_data(app_url: str):
         name = asset.get("name", "")
         if name.endswith(".AppImage"):
             download_url = asset.get("browser_download_url", "")
+            download_path = os.path.join(APPIMAGE_PATH, name)
             return {
                 "success": True,
                 "app_name": name,
+                "app_path": download_path,
                 "version": version,
                 "download_url": download_url,
                 "status": "Get data success",
@@ -65,6 +66,7 @@ def get_latest_appimage_data(app_url: str):
     return {
         "success": False,
         "app_name": None,
+        "app_path": None,
         "version": None,
         "download_url": None,
         "status": "AppImage not found",
@@ -101,7 +103,7 @@ def print_progress(downloaded: int, total: int):
     sys.stdout.flush()
 
 
-def download(url: str, app_name: str):
+def download(url: str, app_path: str):
     try:
         # Ambil data dari url
         response = requests.get(url, stream=True, timeout=30)
@@ -116,11 +118,8 @@ def download(url: str, app_name: str):
     # Buat folder jika belum ada
     os.makedirs(APPIMAGE_PATH, exist_ok=True)
 
-    # Buat path untuk appimage yang di download
-    save_path = os.path.join(APPIMAGE_PATH, app_name)
-
     # Download dan simpan content dari response dengan progress
-    with open(save_path, "wb") as file:
+    with open(app_path, "wb") as file:
         for chunk in response.iter_content(1024):
             file.write(chunk)
             downloaded += len(chunk)
@@ -139,13 +138,16 @@ def read_repository():
         return json.load(file)
 
 
-def update_repository(repo: str, app_name: str, version: str, download_url: str):
+def update_repository(
+    repo: str, app_name: str, app_path: str, version: str, download_url: str
+):
     # Baca data repo
     data = read_repository()
 
     # Buat dict untuk data repo
     data[repo] = {
         "app_name": app_name,
+        "app_path": app_path,
         "version": version,
         "download_url": download_url,
     }
