@@ -2,9 +2,8 @@ import json
 import requests
 import sys
 import os
-from pathlib import Path
 
-ROOT_FOLDER = os.path.join(Path.home(), ".local", "share", "yui")
+ROOT_FOLDER = os.path.join(os.path.expanduser("~"), ".local", "share", "yui")
 APPIMAGE_PATH = os.path.join(ROOT_FOLDER, "appimage")
 REPO_PATH = os.path.join(ROOT_FOLDER, "repos.json")
 
