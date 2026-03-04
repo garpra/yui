@@ -31,6 +31,10 @@ def install_app(args):
     # Buat path untuk appimage yang di download
     save_path = os.path.join(APPIMAGE_PATH, app_name)
 
+    if os.path.isfile(save_path):
+        print(f"\n{app_url} has been downloaded and is the latest version")
+        return
+
     # Download AppImage sesuai dengan url dan path
     download(download_url, save_path)
     print(f"Download {app_name} successfully")
