@@ -2,9 +2,11 @@ import json
 import requests
 import sys
 import os
+from pathlib import Path
 
-# Temporary Repo folder
-ROOT_FOLDER = os.path.join(".local", "share", "yui")
+ROOT_FOLDER = os.path.join(Path.home(), ".local", "share", "yui")
+APPIMAGE_PATH = os.path.join(ROOT_FOLDER, "appimage")
+REPO_PATH = os.path.join(ROOT_FOLDER, "repos.json")
 
 
 def get_latest_appimage_data(app_url: str):
@@ -81,7 +83,7 @@ def print_progress(downloaded: int, total: int):
     sys.stdout.flush()
 
 
-def download(url: str, location: str):
+def download(url: str, app_name: str):
     try:
         # Ambil data dari url
         response = requests.get(url, stream=True, timeout=30)
@@ -93,17 +95,25 @@ def download(url: str, location: str):
     total_size = int(response.headers.get("content-length", 0))
     downloaded = 0
 
+    # Buat folder jika belum ada
+    os.makedirs(APPIMAGE_PATH, exist_ok=True)
+
+    # Buat path untuk appimage yang di download
+    save_path = os.path.join(APPIMAGE_PATH, app_name)
+
+    # Cek jika AppImage yang sesuai dengan url dan versi terbaru
+    if os.path.isfile(save_path):
+        print(f"{url} has been downloaded and is the latest version")
+        return
+
     # Download dan simpan content dari response dengan progress
-    with open(location, "wb") as file:
+    with open(save_path, "wb") as file:
         for chunk in response.iter_content(1024):
             file.write(chunk)
             downloaded += len(chunk)
             print_progress(downloaded, total_size)
 
     print()
-
-
-REPO_PATH = os.path.join(ROOT_FOLDER, "repos.json")
 
 
 def read_repository():
@@ -130,3 +140,15 @@ def update_repository(repo: str, app_name: str, version: str, download_url: str)
     # Simpan data ke repo
     with open(REPO_PATH, "w") as file:
         json.dump(data, file, indent=2)
+
+
+def get_list_app():
+    # Baca data repo
+    data = read_repository()
+    repo_list = []
+
+    # Ambil key name appnya saja
+    for app_url in data:
+        repo_list.append(app_url)
+
+    return repo_list
