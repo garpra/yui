@@ -1,5 +1,10 @@
+import json
 import requests
 import sys
+import os
+
+# Temporary Repo folder
+ROOT_FOLDER = os.path.join(".local", "share", "yui")
 
 
 def get_latest_appimage_data(app_url: str):
@@ -96,3 +101,32 @@ def download(url: str, location: str):
             print_progress(downloaded, total_size)
 
     print()
+
+
+REPO_PATH = os.path.join(ROOT_FOLDER, "repos.json")
+
+
+def read_repository():
+    # Cek apakah file ada sebelum membuka file
+    if not os.path.exists(REPO_PATH):
+        return {}
+
+    # Baca file
+    with open(REPO_PATH, "r") as file:
+        return json.load(file)
+
+
+def update_repository(repo: str, app_name: str, version: str, download_url: str):
+    # Baca data repo
+    data = read_repository()
+
+    # Buat dict untuk data repo
+    data[repo] = {
+        "app_name": app_name,
+        "version": version,
+        "download_url": download_url,
+    }
+
+    # Simpan data ke repo
+    with open(REPO_PATH, "w") as file:
+        json.dump(data, file, indent=2)
