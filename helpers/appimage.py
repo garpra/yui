@@ -1,0 +1,96 @@
+import os
+import stat
+import subprocess
+import time
+import glob
+import shutil
+
+from helpers.constant import APPIMAGE_PATH
+import helpers.constant as con
+
+
+def remove_appimage(app_path: str):
+    if os.path.exists(app_path):
+        os.remove(app_path)
+    else:
+        print("File already deleted")
+
+
+def remove_desktop_entry(desktop_path: str):
+    if os.path.exists(desktop_path):
+        os.remove(desktop_path)
+    else:
+        print("Desktop Entry already deleted")
+
+
+def make_executable(app_path: str):
+    # Cek jika appimage ada
+    if os.path.exists(app_path):
+        # Ambil status appimage
+        current_mode = os.stat(app_path).st_mode
+
+        # Ubah appimage ke executable
+        os.chmod(app_path, current_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        return True
+    else:
+        return False
+
+
+def extract_data_appimage(app_path: str):
+    app_data = {"desktop_path": "", "icon_path": ""}
+
+    # Validasi app_path
+    real_path = os.path.realpath(app_path)
+    if not real_path.startswith(os.path.realpath(APPIMAGE_PATH)):
+        raise ValueError(f"Suspicious app path: {app_path}")
+
+    # Jalankan command mount untuk appimage
+    proc = subprocess.Popen(
+        [app_path, "--appimage-mount"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+
+    # Ambil path mount dari command yang sudah dijalankan
+    mount_app = proc.stdout.readline().decode().strip()
+
+    # Tunggu mount selesai
+    for _ in range(10):
+        # Jika mount ada keluar dari looping
+        if os.path.isdir(mount_app):
+            break
+        time.sleep(0.3)
+    else:
+        # Jika mount path tidak ditemukan dalam 10 detik
+        # Hentikan command
+        proc.terminate()
+        raise RuntimeError(f"Mount path not available: {mount_app}")
+
+    try:
+        # Ambil file path .desktop dan .png di mount path
+        desktop_file = glob.glob(os.path.join(mount_app, "*.desktop"))
+        icon_app = glob.glob(os.path.join(mount_app, "*.png"))
+
+        # Buat folder jika tidak ada
+        os.makedirs(con.DESKTOP_PATH, exist_ok=True)
+        os.makedirs(con.ICON_PATH, exist_ok=True)
+
+        # Cek apakah menemukan desktop entry
+        if desktop_file:
+            desktop_name = os.path.basename(desktop_file[0])
+            dest_desktop = os.path.join(con.DESKTOP_PATH, desktop_name)
+            # Copy file dari mount app ke tujuan
+            shutil.copy2(desktop_file[0], con.DESKTOP_PATH)
+            app_data["desktop_path"] = dest_desktop
+
+        # Cek apakah menemukan icon
+        if icon_app:
+            icon_name = os.path.basename(icon_app[0])
+            dest_icon = os.path.join(con.ICON_PATH, icon_name)
+            # Copy file dari mount app ke tujuan
+            shutil.copy2(icon_app[0], con.ICON_PATH)
+            app_data["icon_path"] = dest_icon
+    finally:
+        # Matikan command
+        proc.terminate()
+        proc.wait()
+
+    return app_data

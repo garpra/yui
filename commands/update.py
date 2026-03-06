@@ -1,17 +1,19 @@
-from helpers.utils import (
-    download,
-    get_latest_appimage_data,
-    get_list_app,
-    read_repository,
+from helpers.downloader import download
+from helpers.appimage import (
+    extract_data_appimage,
+    make_executable,
     remove_appimage,
     remove_desktop_entry,
+)
+from helpers.github import fetch_latest_release
+from helpers.repository import (
     update_repository,
-    make_executable,
-    extract_data_appimage,
+    get_list_app,
+    read_repository,
 )
 
 
-def update_app():
+def update_app(args):
     # Ambil list data dari repo
     list_app = get_list_app()
     # Cek jika list data kosong
@@ -27,7 +29,13 @@ def update_app():
         repo_version = data_repo[app_url]["version"]
 
         # Ambil metadata app terbaru
-        new_data = get_latest_appimage_data(app_url)
+        new_data = fetch_latest_release(app_url)
+
+        # Cek jika data new kosong/error
+        if not new_data or not new_data["success"]:
+            print(f"Failed to get data for {app_url}, skipping...\n")
+            continue
+
         new_version = new_data["version"]
         new_download_url = new_data["download_url"]
         new_app_name = new_data["app_name"]
@@ -51,7 +59,9 @@ def update_app():
             make_executable(new_app_path)
 
             # Ambil data desktop dan icon dari appimage
-            desktop_path, icon_path = extract_data_appimage(new_app_path)
+            app_data_path = extract_data_appimage(new_app_path)
+            desktop_path = app_data_path.get("desktop_path", "")
+            icon_path = app_data_path.get("icon_path", "")
 
             # Update repository data
             update_repository(
