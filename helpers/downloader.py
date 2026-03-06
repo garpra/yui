@@ -40,8 +40,7 @@ def download(url: str, app_path: str):
         response = requests.get(url, stream=True, timeout=30)
         response.raise_for_status()
     except requests.exceptions.RequestException as err:
-        print(f"Download Error: {err}")
-        return
+        raise RuntimeError(f"Download failed: {err}") from err
 
     total_size = int(response.headers.get("content-length", 0))
     downloaded = 0

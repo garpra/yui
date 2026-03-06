@@ -14,7 +14,7 @@ def repo_type(text):
     # Cek jika input tidak sesuai format
     if not re.match(pattern, text):
         raise argparse.ArgumentTypeError(
-            f"Invalid format {text}, format is 'owner/repo'"
+            f"Invalid format '{text}', format is 'owner/repo'"
         )
 
     return text

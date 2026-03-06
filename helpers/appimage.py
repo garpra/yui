@@ -5,7 +5,6 @@ import time
 import glob
 import shutil
 
-from helpers.constant import APPIMAGE_PATH
 import helpers.constant as con
 
 
@@ -41,7 +40,7 @@ def extract_data_appimage(app_path: str):
 
     # Validasi app_path
     real_path = os.path.realpath(app_path)
-    if not real_path.startswith(os.path.realpath(APPIMAGE_PATH)):
+    if not real_path.startswith(os.path.realpath(con.APPIMAGE_PATH)):
         raise ValueError(f"Suspicious app path: {app_path}")
 
     # Jalankan command mount untuk appimage

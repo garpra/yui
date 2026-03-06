@@ -15,8 +15,10 @@ def install_app(args):
     results = fetch_latest_release(app_url)
 
     # Cek jika ambil data success
-    if not results["success"]:
-        print(f"Failed to get data: {results['status']}\n")
+    if not results or not results["success"]:
+        print(
+            f"Failed to get data: {results['status'] if results else 'unknwon error'}\n"
+        )
         return
 
     app_name = results["app_name"]

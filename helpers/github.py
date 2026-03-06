@@ -39,7 +39,7 @@ def fetch_latest_release(app_url: str):
     # Ambil versi app terbaru
     version = data.get("tag_name", "")
 
-    assets_app = find_appimage_assets(data)
+    assets_app = find_appimage_assets(data.get("assets", []))
     if assets_app:
         if not is_safe_url(assets_app.get("browser_download_url", "")):
             return {
