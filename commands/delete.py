@@ -1,4 +1,9 @@
-from helpers.utils import read_repository, remove_appimage, remove_repository
+from helpers.utils import (
+    read_repository,
+    remove_appimage,
+    remove_desktop_entry,
+    remove_repository,
+)
 
 
 def delete_app(args):
@@ -11,6 +16,7 @@ def delete_app(args):
         # Cek jika input ada di repo
         if app_url == repo_app_url:
             app_path = data[repo_app_url]["app_path"]
+            desktop_path = data[repo_app_url]["desktop_path"]
 
             print(f"Found {app_url}")
 
@@ -19,6 +25,8 @@ def delete_app(args):
             remove_repository(app_url)
             # Hapus appimage dari app
             remove_appimage(app_path)
+            # Hapus desktop entry
+            remove_desktop_entry(desktop_path)
             return
 
     print("Application is not installed and cannot be removed")

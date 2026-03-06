@@ -3,6 +3,9 @@ import requests
 import sys
 import os
 import stat
+import subprocess
+import glob
+import shutil
 
 ROOT_FOLDER = os.path.join(os.path.expanduser("~"), ".local", "share", "yui")
 APPIMAGE_PATH = os.path.join(ROOT_FOLDER, "appimage")
@@ -27,6 +30,13 @@ def make_executable(app_path: str):
         return True
     else:
         return False
+
+
+def remove_desktop_entry(desktop_path: str):
+    if os.path.exists(desktop_path):
+        os.remove(desktop_path)
+    else:
+        print("Desktop Entry already deleted")
 
 
 def get_latest_appimage_data(app_url: str):
@@ -143,7 +153,13 @@ def read_repository():
 
 
 def update_repository(
-    repo: str, app_name: str, app_path: str, version: str, download_url: str
+    repo: str,
+    app_name: str,
+    app_path: str,
+    version: str,
+    download_url: str,
+    desktop_path: str,
+    icon_path: str,
 ):
     # Baca data repo
     data = read_repository()
@@ -154,6 +170,8 @@ def update_repository(
         "app_path": app_path,
         "version": version,
         "download_url": download_url,
+        "desktop_path": desktop_path,
+        "icon_path": icon_path,
     }
 
     # Simpan data ke repo
@@ -183,3 +201,49 @@ def get_list_app():
         repo_list.append(app_url)
 
     return repo_list
+
+
+def extract_data_appimage(app_path: str):
+    app_data = []
+
+    # Jalankan command mount untuk appimage
+    proc = subprocess.Popen(
+        [app_path, "--appimage-mount"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+
+    # Ambil path mount dari command yang sudah dijalankan
+    mount_app = proc.stdout.readline().decode().strip()
+
+    # Ambil file path .desktop dan .png di mount path
+    desktop_file = glob.glob(os.path.join(mount_app, "*.desktop"))
+    icon_app = glob.glob(os.path.join(mount_app, "*.png"))
+
+    # Buat path tujuan untuk desktop entry dan icon
+    desktop_path = os.path.join(
+        os.path.expanduser("~"), ".local", "share", "applications"
+    )
+    icon_path = os.path.join(os.path.expanduser("~"), ".local", "share", "icons", "yui")
+
+    # Buat folder jika tidak ada
+    os.makedirs(desktop_path, exist_ok=True)
+    os.makedirs(icon_path, exist_ok=True)
+
+    # Cek apakah menemukan desktop entry
+    if desktop_file:
+        desktop_name = os.path.basename(desktop_file[0])
+        dest_desktop = os.path.join(desktop_path, desktop_name)
+        # Copy file dari mount app ke tujuan
+        shutil.copy2(desktop_file[0], desktop_path)
+        app_data.append(dest_desktop)
+
+    # Cek apakah menemukan icon
+    if icon_app:
+        icon_name = os.path.basename(icon_app[0])
+        dest_icon = os.path.join(icon_path, icon_name)
+        # Copy file dari mount app ke tujuan
+        shutil.copy2(icon_app[0], icon_path)
+        app_data.append(dest_icon)
+
+    # Matikan command
+    proc.terminate()
+    return app_data

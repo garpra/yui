@@ -1,6 +1,7 @@
 import os
 from helpers.utils import (
     download,
+    extract_data_appimage,
     get_latest_appimage_data,
     make_executable,
     update_repository,
@@ -38,7 +39,12 @@ def install_app(args):
     # Atur agar appimage menjadi executable
     make_executable(app_path)
 
+    # Ambil data desktop dan icon dari appimage
+    desktop_path, icon_path = extract_data_appimage(app_path)
+
     # Update repository data
-    update_repository(app_url, app_name, app_path, version, download_url)
+    update_repository(
+        app_url, app_name, app_path, version, download_url, desktop_path, icon_path
+    )
 
     print(f"\nDownload {app_name} successfully")

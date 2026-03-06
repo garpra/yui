@@ -4,7 +4,10 @@ from helpers.utils import (
     get_list_app,
     read_repository,
     remove_appimage,
+    remove_desktop_entry,
     update_repository,
+    make_executable,
+    extract_data_appimage,
 )
 
 
@@ -37,13 +40,28 @@ def update_app():
             # Hapus appimage lama
             remove_appimage(data_repo[app_url]["app_path"])
 
+            # Hapus desktop entry lama
+            remove_desktop_entry(data_repo[app_url]["desktop_path"])
+
             # Update app ke versi terbaru
             print(f"Updating {app_url} {new_version}:")
             download(new_download_url, new_app_path)
 
+            # Atur agar appimage menjadi executable
+            make_executable(new_app_path)
+
+            # Ambil data desktop dan icon dari appimage
+            desktop_path, icon_path = extract_data_appimage(new_app_path)
+
             # Update repository data
             update_repository(
-                app_url, new_app_name, new_app_path, new_version, new_download_url
+                app_url,
+                new_app_name,
+                new_app_path,
+                new_version,
+                new_download_url,
+                desktop_path,
+                icon_path,
             )
 
     print("\nUpdate all application finished")
