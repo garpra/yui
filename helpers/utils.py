@@ -2,19 +2,11 @@ import json
 import requests
 import sys
 import os
+import stat
 
 ROOT_FOLDER = os.path.join(os.path.expanduser("~"), ".local", "share", "yui")
 APPIMAGE_PATH = os.path.join(ROOT_FOLDER, "appimage")
 REPO_PATH = os.path.join(ROOT_FOLDER, "repos.json")
-
-
-def appimage_exists(app_name: str):
-    app_path = os.path.join(APPIMAGE_PATH, app_name)
-    # Cek jika AppImage yang sesuai dengan url dan versi terbaru
-    if os.path.isfile(app_path):
-        return True
-
-    return False
 
 
 def remove_appimage(app_path: str):
@@ -22,6 +14,19 @@ def remove_appimage(app_path: str):
         os.remove(app_path)
     else:
         print("File already deleted")
+
+
+def make_executable(app_path: str):
+    # Ambil status appimage
+    current_mode = os.stat(app_path).st_mode
+
+    # Cek jika appimage ada
+    if os.path.exists(app_path):
+        # Ubah appimage ke executable
+        os.chmod(app_path, current_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        return True
+    else:
+        return False
 
 
 def get_latest_appimage_data(app_url: str):

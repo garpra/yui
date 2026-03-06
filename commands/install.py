@@ -1,7 +1,8 @@
+import os
 from helpers.utils import (
-    appimage_exists,
     download,
     get_latest_appimage_data,
+    make_executable,
     update_repository,
 )
 
@@ -27,12 +28,15 @@ def install_app(args):
     print(f"Found: {app_name} {version}\n")
 
     # Cek jika appimage sudah ada dan versi terbaru
-    if appimage_exists(app_name):
+    if os.path.exists(app_path):
         print(f"{app_url} has been downloaded and is the latest version")
         return
 
     # Download AppImage sesuai dengan url dan path
     download(download_url, app_path)
+
+    # Atur agar appimage menjadi executable
+    make_executable(app_path)
 
     # Update repository data
     update_repository(app_url, app_name, app_path, version, download_url)
