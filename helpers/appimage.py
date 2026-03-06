@@ -9,6 +9,7 @@ import helpers.constant as con
 
 
 def remove_appimage(app_path: str):
+    # Cek jika app path ada
     if os.path.exists(app_path):
         os.remove(app_path)
     else:
@@ -16,6 +17,7 @@ def remove_appimage(app_path: str):
 
 
 def remove_desktop_entry(desktop_path: str):
+    # Cek jika desktop entry path ada
     if os.path.exists(desktop_path):
         os.remove(desktop_path)
     else:
@@ -24,15 +26,14 @@ def remove_desktop_entry(desktop_path: str):
 
 def make_executable(app_path: str):
     # Cek jika appimage ada
-    if os.path.exists(app_path):
-        # Ambil status appimage
-        current_mode = os.stat(app_path).st_mode
+    if not os.path.exists(app_path):
+        raise FileNotFoundError(f"AppImage not found: {app_path}")
 
-        # Ubah appimage ke executable
-        os.chmod(app_path, current_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-        return True
-    else:
-        return False
+    # Ambil status appimage
+    current_mode = os.stat(app_path).st_mode
+
+    # Ubah appimage ke executable
+    os.chmod(app_path, current_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 
 def extract_data_appimage(app_path: str):

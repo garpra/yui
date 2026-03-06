@@ -17,7 +17,7 @@ def install_app(args):
     # Cek jika ambil data success
     if not results or not results["success"]:
         print(
-            f"Failed to get data: {results['status'] if results else 'unknwon error'}\n"
+            f"Failed to get data: {results['status'] if results else 'unknown error'}\n"
         )
         return
 

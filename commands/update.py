@@ -45,15 +45,20 @@ def update_app(args):
         if repo_version == new_version:
             print(f"{app_url} is latest version")
         else:
+            # Update app ke versi terbaru
+            print(f"Updating {app_url} {new_version}:")
+            try:
+                download(new_download_url, new_app_path)
+            # Kalau gagal skip app tersebut
+            except RuntimeError as err:
+                print(f"Download failed for {app_url}: {err}, skipping...\n")
+                continue
+
             # Hapus appimage lama
             remove_appimage(data_repo[app_url]["app_path"])
 
             # Hapus desktop entry lama
             remove_desktop_entry(data_repo[app_url]["desktop_path"])
-
-            # Update app ke versi terbaru
-            print(f"Updating {app_url} {new_version}:")
-            download(new_download_url, new_app_path)
 
             # Atur agar appimage menjadi executable
             make_executable(new_app_path)

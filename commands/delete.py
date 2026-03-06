@@ -8,6 +8,7 @@ def delete_app(args):
     # Ambil data repo
     data = read_repository()
 
+    # Cek jika app tidak ada
     if app_url not in data:
         print("Application is not installed and cannot be removed")
         return

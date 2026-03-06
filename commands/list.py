@@ -11,5 +11,6 @@ def list_app(args):
         return
 
     print("Installed app:")
+    # Print seluruh app
     for app_url in app_list:
         print(app_url)
