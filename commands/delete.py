@@ -3,6 +3,13 @@ from helpers.appimage import remove_appimage, remove_desktop_entry
 
 
 def delete_app(args):
+    """
+    Hapus aplikasi AppImage yang terinstal dari sistem.
+
+    Menghapus entri aplikasi dari repositori, menghapus file AppImage,
+    dan menghapus file desktop entry. Aplikasi harus terinstal sebelumnya
+    melalui Yui.
+    """
     # Ambil data input
     app_url = args.app_url
     # Ambil data repo

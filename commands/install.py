@@ -8,6 +8,14 @@ import helpers.models as types
 
 
 def install_app(args):
+    """
+    Instal aplikasi AppImage dari repositori GitHub.
+
+    Mengambil versi terbaru dari repositori GitHub yang ditentukan, mengunduh
+    asset AppImage, menjadikan appimage executable, mengekstrak data desktop dan ikon,
+    serta mendaftarkan aplikasi di repositori lokal. Jika AppImage sudah di download
+    dan versi terbaru, operasi akan dilewati.
+    """
     app_url = args.app_url
 
     print(f"Search info AppImage for: {app_url}\n")

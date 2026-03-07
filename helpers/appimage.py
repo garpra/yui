@@ -9,6 +9,9 @@ import helpers.models as types
 
 
 def remove_appimage(app_path: str) -> None:
+    """
+    Hapus file AppImage dari sistem file.
+    """
     # Cek jika app path ada
     if os.path.exists(app_path):
         os.remove(app_path)
@@ -17,6 +20,12 @@ def remove_appimage(app_path: str) -> None:
 
 
 def remove_desktop_entry(desktop_path: str) -> None:
+    """
+    Hapus file desktop entry dari sistem file.
+
+    File desktop entry (.desktop) digunakan oleh lingkungan desktop Linux untuk
+    menampilkan aplikasi di menu aplikasi dan launcher.
+    """
     # Cek jika desktop entry path ada
     if os.path.exists(desktop_path):
         os.remove(desktop_path)
@@ -25,6 +34,11 @@ def remove_desktop_entry(desktop_path: str) -> None:
 
 
 def make_executable(app_path: str) -> None:
+    """
+    Atur izin executable pada file AppImage.
+
+    Ini diperlukan agar file AppImage dapat dijalankan pada sistem Linux.
+    """
     # Cek jika appimage ada
     if not os.path.exists(app_path):
         raise FileNotFoundError(f"AppImage not found: {app_path}")
@@ -37,6 +51,16 @@ def make_executable(app_path: str) -> None:
 
 
 def extract_data_appimage(app_path: str) -> types.AppPathData:
+    """
+    Ekstrak data desktop dan ikon dari file AppImage dengan cara mounting.
+
+    Mount file AppImage menggunakan flag bawaan --appimage-mount, kemudian
+    mencari file .desktop dan .png di dalam sistem file yang di-mount. File-file
+    ini disalin ke direktori sistem yang sesuai (~/.local/share/applications
+    dan ~/.local/share/icons/yui) sehingga aplikasi muncul di menu desktop.
+
+    Mount akan dibersihkan secara otomatis setelah ekstraksi.
+    """
     app_data: types.AppPathData = {"desktop_path": "", "icon_path": ""}
 
     # Validasi app_path

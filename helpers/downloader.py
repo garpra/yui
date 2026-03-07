@@ -6,6 +6,11 @@ import helpers.constant as con
 
 # Membuat fungsi untuk progress bar proses download
 def print_progress(downloaded: int, total: int) -> None:
+    """
+    Tampilkan progress bar unduhan di terminal.
+
+    Mencetak progress bar visual dengan informasi persentase dan ukuran unduhan.
+    """
     # Jika total ukuran tidak diketahui
     if total == 0:
         # Tampilkan jumlah data yang sudah diunduh dalam KB
@@ -35,6 +40,12 @@ def print_progress(downloaded: int, total: int) -> None:
 
 
 def download(url: str, app_path: str) -> None:
+    """
+    Unduh file dari URL ke path yang ditentukan.
+
+    Mengunduh file dalam potongan dan menampilkannya dalam progress bar. Jika unduhan
+    gagal, file yang telah diunduh sebagian akan dihapus secara otomatis.
+    """
     try:
         # Ambil data dari url
         response = requests.get(url, stream=True, timeout=30)

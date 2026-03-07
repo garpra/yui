@@ -8,6 +8,12 @@ from commands.delete import delete_app
 
 # Repo cek format repo app
 def repo_type(text):
+    """
+    Validasi jika string input sesuai dengan format 'owner/repo'.
+
+    Fungsi ini digunakan untuk validator tipe custom untuk argumen argparse agar memastikan
+    bahwa URL dari repositori sesuai dengan sistem yang dibuat.
+    """
     # Regex format owner/repo
     pattern = r"^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$"
 
@@ -21,6 +27,15 @@ def repo_type(text):
 
 
 def main():
+    """
+    Fungsi utama untuk aplikasi CLI Yui.
+
+    Membuat parser argumen dengan subcommand untuk mengelola aplikasi AppImage:
+    - install: Download dan instal AppImage dari GitHub
+    - list: Tampilkan semua aplikasi AppImage yang terinstal
+    - update: Perbarui semua aplikasi yang terinstal ke versi terbaru
+    - delete: Hapus aplikasi yang terinstal dari sistem
+    """
     # Buat parser
     parser = argparse.ArgumentParser(
         prog="yui", description="Yui - AppImage manager for Linux"

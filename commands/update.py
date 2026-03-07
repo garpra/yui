@@ -15,6 +15,17 @@ import helpers.models as types
 
 
 def update_app(args):
+    """
+    Perbarui semua aplikasi AppImage yang terinstal ke versi terbaru.
+
+    Memeriksa versi terbaru aplikasi dari GitHub,
+    dan mengunduh pembaruan jika tersedia. Untuk setiap aplikasi yang diperbarui,
+    AppImage dan desktop entry lama dihapus, dan versi baru akan diunduh,
+    dijadikan executable, dan didaftarkan ke repositori.
+
+    Aplikasi yang gagal diunduh akan dilewati dengan pesan error.
+    Aplikasi yang sudah versi terbaru akan dilewati.
+    """
     # Ambil list data dari repo
     list_app = get_list_app()
     # Cek jika list data kosong

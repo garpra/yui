@@ -2,6 +2,12 @@ from helpers.repository import get_list_app
 
 
 def list_app(args):
+    """
+    Tampilkan semua aplikasi AppImage yang terinstal.
+
+    Mengambil dan menampilkan semua aplikasi yang telah diinstal melalui Yui
+    dari repositori lokal. Setiap entri ditampilkan dalam format 'owner/repo'.
+    """
     # Ambil data list app
     app_list = get_list_app()
 

@@ -6,6 +6,12 @@ import helpers.models as types
 
 
 def read_repository() -> dict:
+    """
+    Ambil dan kembalikan isi dari repositori aplikasi lokal.
+
+    Membaca file JSON repositori dari aplikasi AppImage yang terinstal.
+    Jika file repositori tidak ada, dictionary kosong akan dikembalikan.
+    """
     # Cek apakah file ada sebelum membuka file
     if not os.path.exists(con.REPO_PATH):
         return {}
@@ -16,6 +22,13 @@ def read_repository() -> dict:
 
 
 def update_repository(repo: str, record: types.AppRecord) -> None:
+    """
+    Tambahkan atau perbarui data aplikasi pada repositori lokal.
+
+    Menggunakan file locking untuk memastikan akses bersamaan yang aman. Membaca
+    data repositori yang ada, memperbarui atau menambahkan data aplikasi,
+    dan menulis data baru ke file repositori.
+    """
     # Buat file lock
     try:
         with FileLock(con.REPO_PATH + ".lock", timeout=5):
@@ -40,6 +53,13 @@ def update_repository(repo: str, record: types.AppRecord) -> None:
 
 
 def remove_repository(app_url: str) -> None:
+    """
+    Hapus data aplikasi dari repositori lokal.
+
+    Menggunakan file locking untuk memastikan akses bersamaan yang aman. Membaca
+    data repositori yang ada, menghapus entri untuk aplikasi yang ditentukan, dan
+    menulis data yang telah diperbarui ke repositori lokal.
+    """
     try:
         with FileLock(con.REPO_PATH + ".lock", timeout=5):
             # Ambil data repo
@@ -56,4 +76,7 @@ def remove_repository(app_url: str) -> None:
 
 
 def get_list_app() -> list[str]:
+    """
+    Ambil daftar semua list aplikasi yang terinstal di repositori lokal.
+    """
     return list(read_repository().keys())
