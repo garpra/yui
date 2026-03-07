@@ -4,11 +4,11 @@ import subprocess
 import time
 import glob
 import shutil
-
 import helpers.constant as con
+import helpers.models as types
 
 
-def remove_appimage(app_path: str):
+def remove_appimage(app_path: str) -> None:
     # Cek jika app path ada
     if os.path.exists(app_path):
         os.remove(app_path)
@@ -16,7 +16,7 @@ def remove_appimage(app_path: str):
         print("File already deleted")
 
 
-def remove_desktop_entry(desktop_path: str):
+def remove_desktop_entry(desktop_path: str) -> None:
     # Cek jika desktop entry path ada
     if os.path.exists(desktop_path):
         os.remove(desktop_path)
@@ -24,7 +24,7 @@ def remove_desktop_entry(desktop_path: str):
         print("Desktop Entry already deleted")
 
 
-def make_executable(app_path: str):
+def make_executable(app_path: str) -> None:
     # Cek jika appimage ada
     if not os.path.exists(app_path):
         raise FileNotFoundError(f"AppImage not found: {app_path}")
@@ -36,8 +36,8 @@ def make_executable(app_path: str):
     os.chmod(app_path, current_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 
-def extract_data_appimage(app_path: str):
-    app_data = {"desktop_path": "", "icon_path": ""}
+def extract_data_appimage(app_path: str) -> types.AppPathData:
+    app_data: types.AppPathData = {"desktop_path": "", "icon_path": ""}
 
     # Validasi app_path
     real_path = os.path.realpath(app_path)

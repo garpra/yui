@@ -5,7 +5,7 @@ import helpers.constant as con
 
 
 # Membuat fungsi untuk progress bar proses download
-def print_progress(downloaded: int, total: int):
+def print_progress(downloaded: int, total: int) -> None:
     # Jika total ukuran tidak diketahui
     if total == 0:
         # Tampilkan jumlah data yang sudah diunduh dalam KB
@@ -34,7 +34,7 @@ def print_progress(downloaded: int, total: int):
     sys.stdout.flush()
 
 
-def download(url: str, app_path: str):
+def download(url: str, app_path: str) -> None:
     try:
         # Ambil data dari url
         response = requests.get(url, stream=True, timeout=30)

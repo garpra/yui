@@ -2,6 +2,7 @@ import requests
 import os
 from urllib.parse import urlparse
 import helpers.constant as con
+import helpers.models as types
 
 
 def is_safe_url(url: str) -> bool:
@@ -12,7 +13,7 @@ def is_safe_url(url: str) -> bool:
     )
 
 
-def find_appimage_assets(assets: list) -> dict | None:
+def find_appimage_asset(assets: list) -> dict | None:
     for asset in assets:
         # Cek jika name dari app berekstensi .appimage
         if asset.get("name", "").endswith(".AppImage"):
@@ -20,7 +21,7 @@ def find_appimage_assets(assets: list) -> dict | None:
     return None
 
 
-def fetch_latest_release(app_url: str):
+def fetch_latest_release(app_url: str) -> types.ReleaseData:
 
     url = f"https://api.github.com/repos/{app_url}/releases/latest"
 
@@ -44,7 +45,7 @@ def fetch_latest_release(app_url: str):
     version = data.get("tag_name", "")
 
     # Ambil data asset appimage
-    assets_app = find_appimage_assets(data.get("assets", []))
+    assets_app = find_appimage_asset(data.get("assets", []))
     # Cek jika appimage ada
     if assets_app:
         # Cek jika key browser_download_url aman

@@ -11,6 +11,7 @@ from helpers.repository import (
     get_list_app,
     read_repository,
 )
+import helpers.models as types
 
 
 def update_app(args):
@@ -32,7 +33,7 @@ def update_app(args):
         new_data = fetch_latest_release(app_url)
 
         # Cek jika data new kosong/error
-        if not new_data or not new_data["success"]:
+        if not new_data["success"]:
             print(f"Failed to get data for {app_url}, skipping...\n")
             continue
 
@@ -65,18 +66,18 @@ def update_app(args):
 
             # Ambil data desktop dan icon dari appimage
             app_data_path = extract_data_appimage(new_app_path)
-            desktop_path = app_data_path.get("desktop_path", "")
-            icon_path = app_data_path.get("icon_path", "")
+            desktop_path = app_data_path["desktop_path"]
+            icon_path = app_data_path["icon_path"]
 
-            # Update repository data
-            update_repository(
-                app_url,
-                new_app_name,
-                new_app_path,
-                new_version,
-                new_download_url,
-                desktop_path,
-                icon_path,
+            record = types.AppRecord(
+                app_name=new_app_name,
+                app_path=new_app_path,
+                version=new_version,
+                download_url=new_download_url,
+                desktop_path=desktop_path,
+                icon_path=icon_path,
             )
+            # Update repository data
+            update_repository(app_url, record)
 
     print("\nUpdate all application finished")

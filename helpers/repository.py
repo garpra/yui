@@ -2,9 +2,10 @@ import os
 import json
 from filelock import FileLock, Timeout
 import helpers.constant as con
+import helpers.models as types
 
 
-def read_repository():
+def read_repository() -> dict:
     # Cek apakah file ada sebelum membuka file
     if not os.path.exists(con.REPO_PATH):
         return {}
@@ -14,15 +15,7 @@ def read_repository():
         return json.load(file)
 
 
-def update_repository(
-    repo: str,
-    app_name: str,
-    app_path: str,
-    version: str,
-    download_url: str,
-    desktop_path: str,
-    icon_path: str,
-):
+def update_repository(repo: str, record: types.AppRecord) -> None:
     # Buat file lock
     try:
         with FileLock(con.REPO_PATH + ".lock", timeout=5):
@@ -31,22 +24,22 @@ def update_repository(
 
             # Buat dict untuk data repo
             data[repo] = {
-                "app_name": app_name,
-                "app_path": app_path,
-                "version": version,
-                "download_url": download_url,
-                "desktop_path": desktop_path,
-                "icon_path": icon_path,
+                "app_name": record.app_name,
+                "app_path": record.app_path,
+                "version": record.version,
+                "download_url": record.download_url,
+                "desktop_path": record.desktop_path,
+                "icon_path": record.icon_path,
             }
 
             # Simpan data ke repo
             with open(con.REPO_PATH, "w") as file:
                 json.dump(data, file, indent=2)
     except Timeout:
-        print("Unable to access repos.json. Please try again later.")
+        print("Unable to access repos.json. Please try again later")
 
 
-def remove_repository(app_url: str):
+def remove_repository(app_url: str) -> None:
     try:
         with FileLock(con.REPO_PATH + ".lock", timeout=5):
             # Ambil data repo
@@ -59,8 +52,8 @@ def remove_repository(app_url: str):
             with open(con.REPO_PATH, "w") as file:
                 json.dump(data, file, indent=2)
     except Timeout:
-        print("")
+        print("Unable to access repos.json. Please try again later")
 
 
-def get_list_app():
+def get_list_app() -> list[str]:
     return list(read_repository().keys())
