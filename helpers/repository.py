@@ -77,6 +77,6 @@ def remove_repository(app_url: str) -> None:
 
 def get_list_app() -> list[str]:
     """
-    Ambil daftar semua list aplikasi yang terinstal di repositori lokal.
+    Ambil daftar semua aplikasi yang terinstal di repositori lokal.
     """
     return list(read_repository().keys())

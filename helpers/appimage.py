@@ -19,6 +19,33 @@ def remove_appimage(app_path: str) -> None:
         print("File already deleted")
 
 
+def fix_desktop_entry(desktop_path: str, app_path: str, icon_path: str) -> None:
+    """
+    Perbaiki Exec dan Icon di .desktop entry agar menunjuk ke path yang benar.
+
+    Hanya mengganti Exec= pertama di dalam section [Desktop Entry].
+    Icon= diganti di seluruh file karena biasanya hanya muncul sekali.
+    """
+    with open(desktop_path, "r") as f:
+        lines = f.readlines()
+
+    in_desktop_entry = False
+    exec_fixed = False
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith("["):
+            in_desktop_entry = stripped == "[Desktop Entry]"
+        if in_desktop_entry and stripped.startswith("Exec=") and not exec_fixed:
+            lines[i] = f"Exec={app_path} %U\n"
+            exec_fixed = True
+        if in_desktop_entry and stripped.startswith("Icon="):
+            lines[i] = f"Icon={icon_path}\n"
+
+    with open(desktop_path, "w") as f:
+        f.writelines(lines)
+
+
 def remove_desktop_entry(desktop_path: str) -> None:
     """
     Hapus file desktop entry dari sistem file.
@@ -112,6 +139,11 @@ def extract_data_appimage(app_path: str) -> types.AppPathData:
             # Copy file dari mount app ke tujuan
             shutil.copy2(icon_app[0], con.ICON_PATH)
             app_data["icon_path"] = dest_icon
+
+        # Fix desktop entry
+        if app_data["desktop_path"]:
+            fix_desktop_entry(app_data["desktop_path"], app_path, app_data["icon_path"])
+
     finally:
         # Matikan command
         proc.terminate()
