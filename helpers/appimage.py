@@ -7,6 +7,12 @@ import shutil
 import helpers.constant as con
 import helpers.models as types
 
+ICON_DIRS = [
+    "/usr/share/icons",
+    os.path.expanduser("~/.local/share/icons"),
+    "/usr/share/pixmaps",
+]
+
 
 def remove_appimage(app_path: str) -> None:
     """
@@ -17,6 +23,43 @@ def remove_appimage(app_path: str) -> None:
         os.remove(app_path)
     else:
         print("File already deleted")
+
+
+def find_icon(name: str) -> list[str]:
+    """
+    Cari file icon berdasarkan nama (tanpa ekstensi) di direktori icon sistem.
+
+    Menelusuri ICON_DIRS secara rekursif dan mengembalikan semua path
+    yang cocok dengan nama dan berekstensi .png, .svg, atau .xpm.
+    """
+    results = []
+    for d in ICON_DIRS:
+        if not os.path.isdir(d):
+            continue
+        for root, _, files in os.walk(d):
+            for f in files:
+                stem, ext = os.path.splitext(f)
+                if ext in (".png", ".svg", ".xpm") and stem == name:
+                    results.append(os.path.join(root, f))
+    return results
+
+
+def get_icon_name(filepath: str) -> str | None:
+    """
+    Ambil nilai Icon= dari file .desktop.
+
+    Membaca file .desktop dan mengembalikan nama icon yang tertera
+    di baris Icon= dalam section [Desktop Entry]. Mengembalikan None
+    jika tidak ditemukan atau file tidak bisa dibaca.
+    """
+    try:
+        with open(filepath) as f:
+            for line in f:
+                if line.startswith("Icon="):
+                    return line.split("=", 1)[1].strip()
+    except OSError:
+        return None
+    return None
 
 
 def fix_desktop_entry(desktop_path: str, app_path: str, icon_path: str) -> None:
@@ -39,8 +82,9 @@ def fix_desktop_entry(desktop_path: str, app_path: str, icon_path: str) -> None:
         if in_desktop_entry and stripped.startswith("Exec=") and not exec_fixed:
             lines[i] = f"Exec={app_path} %U\n"
             exec_fixed = True
-        if in_desktop_entry and stripped.startswith("Icon="):
-            lines[i] = f"Icon={icon_path}\n"
+        if get_icon_name(line):
+            if in_desktop_entry and stripped.startswith("Icon="):
+                lines[i] = f"Icon={icon_path}\n"
 
     with open(desktop_path, "w") as f:
         f.writelines(lines)
@@ -132,17 +176,31 @@ def extract_data_appimage(app_path: str) -> types.AppPathData:
             shutil.copy2(desktop_file[0], con.DESKTOP_PATH)
             app_data["desktop_path"] = dest_desktop
 
-        # Cek apakah menemukan icon
-        if icon_app:
-            icon_name = os.path.basename(icon_app[0])
-            dest_icon = os.path.join(con.ICON_PATH, icon_name)
-            # Copy file dari mount app ke tujuan
+        # Tentukan icon yang akan dipakai:
+        # Cek apakah icon dengan nama yang sama sudah ada di sistem
+        # Jika tidak ada, ekstrak icon dari AppImage
+        icon_path_to_use = ""
+
+        if desktop_file:
+            # Baca nama icon dari .desktop yang masih di dalam mount
+            icon_name = get_icon_name(desktop_file[0])
+            if icon_name:
+                system_icons = find_icon(icon_name)
+                if system_icons:
+                    # Icon sudah tersedia di sistem, tidak perlu salin
+                    icon_path_to_use = system_icons[0]
+
+        if not icon_path_to_use and icon_app:
+            # Icon tidak ditemukan di sistem, salin dari AppImage
+            icon_filename = os.path.basename(icon_app[0])
+            dest_icon = os.path.join(con.ICON_PATH, icon_filename)
             shutil.copy2(icon_app[0], con.ICON_PATH)
             app_data["icon_path"] = dest_icon
+            icon_path_to_use = dest_icon
 
-        # Fix desktop entry
+        # Fix Exec dan Icon di desktop entry
         if app_data["desktop_path"]:
-            fix_desktop_entry(app_data["desktop_path"], app_path, app_data["icon_path"])
+            fix_desktop_entry(app_data["desktop_path"], app_path, icon_path_to_use)
 
     finally:
         # Matikan command
