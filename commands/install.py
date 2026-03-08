@@ -16,8 +16,8 @@ def install_app(args):
     serta mendaftarkan aplikasi di repositori lokal. Jika AppImage sudah di download
     dan versi terbaru, operasi akan dilewati.
     """
-    url_type = args.url_data[0]
-    app_url = args.url_data[1]
+    url_type = args.url_data["url_type"]
+    app_url = args.url_data["url"]
 
     print(f"Search info AppImage for: {app_url}\n")
 
@@ -65,6 +65,7 @@ def install_app(args):
     icon_path = app_data_path["icon_path"]
 
     record = types.AppRecord(
+        url_type=url_type,
         app_name=app_name,
         app_path=app_path,
         version=version,

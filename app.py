@@ -6,7 +6,7 @@ from commands.update import update_app
 from commands.delete import delete_app
 
 
-def url_type(url: str) -> tuple:
+def url_type(url: str) -> dict:
     """
     Validasi jika string input sesuai dengan format 'owner/repo'.
 
@@ -17,11 +17,11 @@ def url_type(url: str) -> tuple:
     pattern = r"^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$"
     # Cek jika input .AppImage
     if url.endswith(".AppImage"):
-        return "local", url
+        return {"url_type": "local", "url": url}
 
     # Cek jika input tidak sesuai format
     elif re.match(pattern, url):
-        return "github", url
+        return {"url_type": "github", "url": url}
 
     raise argparse.ArgumentTypeError(
         f"Invalid format '{url}', format is 'owner/repo' or '/path/to/AppImage'"

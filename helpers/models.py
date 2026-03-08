@@ -18,6 +18,7 @@ class AppPathData(TypedDict):
 
 @dataclass
 class AppRecord:
+    url_type: str
     app_name: str
     app_path: str
     version: str
