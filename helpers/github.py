@@ -3,6 +3,7 @@ import os
 from urllib.parse import urlparse
 import helpers.constant as con
 import helpers.models as types
+from helpers.utils import error_fetch_app
 
 
 def is_safe_url(url: str) -> bool:
@@ -52,14 +53,7 @@ def fetch_latest_release(app_url: str) -> types.ReleaseData:
         response.raise_for_status()
     except requests.exceptions.RequestException as err:
         # Jika gagal mendapatkan data dari GET
-        return {
-            "success": False,
-            "app_name": None,
-            "app_path": None,
-            "version": None,
-            "download_url": None,
-            "status": str(err),
-        }
+        return error_fetch_app(str(err))
 
     data = response.json()
     # Ambil versi app terbaru
@@ -71,14 +65,7 @@ def fetch_latest_release(app_url: str) -> types.ReleaseData:
     if assets_app:
         # Cek jika key browser_download_url aman
         if not is_safe_url(assets_app.get("browser_download_url", "")):
-            return {
-                "success": False,
-                "app_name": None,
-                "app_path": None,
-                "version": None,
-                "download_url": None,
-                "status": "Unsafe download URL",
-            }
+            return error_fetch_app("Unsafe download URL")
 
         download_path = os.path.join(con.APPIMAGE_PATH, assets_app.get("name", ""))
         return {
@@ -90,11 +77,4 @@ def fetch_latest_release(app_url: str) -> types.ReleaseData:
             "status": "Get data success",
         }
 
-    return {
-        "success": False,
-        "app_name": None,
-        "app_path": None,
-        "version": None,
-        "download_url": None,
-        "status": "AppImage not found",
-    }
+    return error_fetch_app("AppImage not found")

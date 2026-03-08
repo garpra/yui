@@ -1,8 +1,8 @@
 import os
-
 from helpers.downloader import download
 from helpers.appimage import extract_data_appimage, make_executable
 from helpers.github import fetch_latest_release
+from helpers.local import fetch_local_app, move_local_app
 from helpers.repository import update_repository
 import helpers.models as types
 
@@ -16,12 +16,21 @@ def install_app(args):
     serta mendaftarkan aplikasi di repositori lokal. Jika AppImage sudah di download
     dan versi terbaru, operasi akan dilewati.
     """
-    app_url = args.app_url
+    url_type = args.url_data[0]
+    app_url = args.url_data[1]
 
     print(f"Search info AppImage for: {app_url}\n")
 
-    # Ambil data versi terbaru dari repo
-    results = fetch_latest_release(app_url)
+    results: types.ReleaseData
+
+    # Cek url tipe apa
+    if url_type == "local":
+        results = fetch_local_app(app_url)
+    elif url_type == "github":
+        # Ambil data versi terbaru dari repo
+        results = fetch_latest_release(app_url)
+    else:
+        raise ValueError(f"Unsupported url type: {url_type}")
 
     # Cek jika ambil data success
     if not results["success"]:
@@ -41,7 +50,11 @@ def install_app(args):
         return
 
     # Download AppImage sesuai dengan url dan path
-    download(download_url, app_path)
+    # Jika tidak berarti file local pindahkan ke app_path
+    if download_url:
+        download(download_url, app_path)
+    else:
+        move_local_app(app_path)
 
     # Atur agar appimage menjadi executable
     make_executable(app_path)

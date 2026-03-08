@@ -6,8 +6,7 @@ from commands.update import update_app
 from commands.delete import delete_app
 
 
-# Repo cek format repo app
-def repo_type(text):
+def url_type(url: str) -> tuple:
     """
     Validasi jika string input sesuai dengan format 'owner/repo'.
 
@@ -16,14 +15,17 @@ def repo_type(text):
     """
     # Regex format owner/repo
     pattern = r"^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$"
+    # Cek jika input .AppImage
+    if url.endswith(".AppImage"):
+        return "local", url
 
     # Cek jika input tidak sesuai format
-    if not re.match(pattern, text):
-        raise argparse.ArgumentTypeError(
-            f"Invalid format '{text}', format is 'owner/repo'"
-        )
+    elif re.match(pattern, url):
+        return "github", url
 
-    return text
+    raise argparse.ArgumentTypeError(
+        f"Invalid format '{url}', format is 'owner/repo' or '/path/to/AppImage'"
+    )
 
 
 def main():
@@ -47,7 +49,11 @@ def main():
     install_cmd = subparser.add_parser(
         "install", help="Download and install AppImage from Github"
     )
-    install_cmd.add_argument("app_url", help="Format: owner/repo", type=repo_type)
+    install_cmd.add_argument(
+        "url_data",
+        help="Format: owner/repo or AppImage",
+        type=url_type,
+    )
     install_cmd.set_defaults(func=install_app)
 
     # Subcommand list
@@ -60,7 +66,9 @@ def main():
 
     # Subcommand delete
     delete_cmd = subparser.add_parser("delete", help="Delete app from system")
-    delete_cmd.add_argument("app_url", help="Format: owner/repo", type=repo_type)
+    delete_cmd.add_argument(
+        "app_url", help="Format: owner/repo or AppImage", type=url_type
+    )
     delete_cmd.set_defaults(func=delete_app)
 
     # Mengambil seluruh parser dari input

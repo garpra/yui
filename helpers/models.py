@@ -4,10 +4,10 @@ from dataclasses import dataclass
 
 class ReleaseData(TypedDict):
     success: bool
-    app_name: str | None
-    app_path: str | None
-    version: str | None
-    download_url: str | None
+    app_name: str
+    app_path: str
+    version: str
+    download_url: str
     status: str
 
 
