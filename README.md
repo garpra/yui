@@ -29,6 +29,33 @@ Yui is a CLI (Command Line Interface) tool designed to manage AppImage applicati
 
 ### Installation Steps
 
+You can install Yui using the provided Makefile (recommended) or manually.
+
+#### Using Makefile (Recommended)
+
+1. Clone this repository:
+
+```bash
+git clone https://github.com/garpra/yui.git
+cd yui
+```
+
+2. Setup the environment and install dependencies:
+
+```bash
+make setup
+```
+
+3. (Optional) Build a standalone executable:
+
+```bash
+make build
+```
+
+This will create a single `yui` binary that can be run without requiring Python or a virtual environment.
+
+#### Manual Installation
+
 1. Clone this repository:
 
 ```bash
@@ -54,6 +81,14 @@ pip install -r requirements.txt
 ```bash
 python app.py --help
 ```
+
+### Makefile Commands
+
+| Command      | Description                                         |
+| ------------ | --------------------------------------------------- |
+| `make setup` | Create virtual environment and install dependencies |
+| `make build` | Build a standalone executable using Nuitka          |
+| `make clean` | Remove virtual environment and build artifacts      |
 
 ## Usage
 
