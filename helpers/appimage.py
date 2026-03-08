@@ -14,6 +14,21 @@ ICON_DIRS = [
 ]
 
 
+def remove_icon(icon_path: str) -> None:
+    """
+    Hapus file icon dari sistem
+    """
+    # Cek jika icon_path kosong
+    if not icon_path:
+        return
+
+    # Cek jika app path ada
+    if os.path.exists(icon_path):
+        os.remove(icon_path)
+    else:
+        print("File already deleted")
+
+
 def remove_appimage(app_path: str) -> None:
     """
     Hapus file AppImage dari sistem file.

@@ -1,5 +1,5 @@
 from helpers.repository import read_repository, remove_repository
-from helpers.appimage import remove_appimage, remove_desktop_entry
+from helpers.appimage import remove_appimage, remove_desktop_entry, remove_icon
 
 
 def delete_app(args):
@@ -22,6 +22,7 @@ def delete_app(args):
 
     app_path = data[app_url]["app_path"]
     desktop_path = data[app_url]["desktop_path"]
+    icon_path = data[app_url]["icon_path"]
 
     print(f"Found {app_url}\n\nDeleting app...")
 
@@ -31,3 +32,5 @@ def delete_app(args):
     remove_appimage(app_path)
     # Hapus desktop entry
     remove_desktop_entry(desktop_path)
+    # Hapus icon path jika ada
+    remove_icon(icon_path)

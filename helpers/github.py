@@ -27,8 +27,10 @@ def find_appimage_asset(assets: list) -> dict | None:
     yang memiliki nama file dengan akhiran '.AppImage'.
     """
     for asset in assets:
-        # Cek jika name dari app berekstensi .appimage
-        if asset.get("name", "").endswith(".AppImage"):
+        # Cek jika name dari app berekstensi .appimage dan tidak berekstensi arm64
+        if asset.get("name", "").endswith(".AppImage") and "arm64" not in asset.get(
+            "name", ""
+        ):
             return asset
     return None
 
