@@ -1,6 +1,7 @@
 import os
 import json
 from filelock import FileLock, Timeout
+from helpers import github
 import helpers.constant as con
 import helpers.models as types
 
@@ -76,8 +77,12 @@ def remove_repository(app_url: str) -> None:
         print("Unable to access repos.json. Please try again later")
 
 
-def get_list_app() -> list[str]:
+def get_list_app() -> dict:
     """
     Ambil daftar semua aplikasi yang terinstal di repositori lokal.
     """
-    return list(read_repository().keys())
+    datas = read_repository()
+    github_app = [key for key, val in datas.items() if val.get("url_type") == "github"]
+    local_app = [key for key, val in datas.items() if val.get("url_type") == "local"]
+
+    return {"github_app": github_app, "local_app": local_app}

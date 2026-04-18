@@ -1,5 +1,4 @@
 from helpers.repository import get_list_app
-from pathlib import Path
 
 
 def list_app(args):
@@ -18,6 +17,13 @@ def list_app(args):
         return
 
     print("Installed app:")
-    # Print seluruh app
-    for app_url in app_list:
+
+    # Print github app
+    print("Github App:")
+    for app_url in app_list["github_app"]:
+        print(app_url)
+
+    # Print local app
+    print("\nLocal App:")
+    for app_url in app_list["local_app"]:
         print(app_url)
