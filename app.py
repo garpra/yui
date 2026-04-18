@@ -67,7 +67,7 @@ def main():
     # Subcommand delete
     delete_cmd = subparser.add_parser("delete", help="Delete app from system")
     delete_cmd.add_argument(
-        "app_url", help="Format: owner/repo or AppImage", type=url_type
+        "url_data", help="Format: owner/repo or AppImage", type=url_type
     )
     delete_cmd.set_defaults(func=delete_app)
 

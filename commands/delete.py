@@ -11,7 +11,8 @@ def delete_app(args):
     melalui Yui.
     """
     # Ambil data input
-    app_url = args.app_url
+    app_url = args.url_data["url"]
+
     # Ambil data repo
     data = read_repository()
 
@@ -26,11 +27,11 @@ def delete_app(args):
 
     print(f"Found {app_url}\n\nDeleting app...")
 
-    # Hapus data app dari repo
-    remove_repository(app_url)
-    # Hapus appimage dari app
-    remove_appimage(app_path)
-    # Hapus desktop entry
-    remove_desktop_entry(desktop_path)
     # Hapus icon path jika ada
     remove_icon(icon_path)
+    # Hapus desktop entry
+    remove_desktop_entry(desktop_path)
+    # Hapus appimage dari app
+    remove_appimage(app_path)
+    # Hapus data app dari repo
+    remove_repository(app_url)
