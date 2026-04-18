@@ -39,7 +39,6 @@ def update_repository(repo: str, record: types.AppRecord) -> None:
             # Buat dict untuk data repo
             data[repo] = {
                 "url_type": record.url_type,
-                "app_name": record.app_name,
                 "app_path": record.app_path,
                 "version": record.version,
                 "download_url": record.download_url,

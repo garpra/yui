@@ -30,69 +30,65 @@ def update_app(args):
     list_app = get_list_app()
     # Cek jika list data kosong
     if not list_app:
-        print("No application is installed")
+        print("\nNo application is installed")
         return
 
     # Ambil semua data dari repo
     data_repo = read_repository()
 
-    for app_url in list_app:
-        # Cek jika url tipenya adalah github
-        if data_repo[app_url]["url_type"] == "github":
-            # Ambil versi app dari repo
-            repo_version = data_repo[app_url]["version"]
+    for app_url in list_app["github_app"]:
+        # Ambil versi app dari repo
+        repo_version = data_repo[app_url]["version"]
 
-            # Ambil metadata app terbaru
-            new_data = fetch_latest_release(app_url)
+        # Ambil metadata app terbaru
+        new_data = fetch_latest_release(app_url)
 
-            # Cek jika data new kosong/error
-            if not new_data["success"]:
-                print(f"Failed to get data for {app_url}, skipping...\n")
+        # Cek jika data new kosong/error
+        if not new_data["success"]:
+            print(f"Failed to get data for {app_url}, skipping...")
+            continue
+
+        url_type = data_repo[app_url]["url_type"]
+        new_version = new_data["version"]
+        new_download_url = new_data["download_url"]
+        new_app_path = new_data["app_path"]
+
+        # Cek jika versi app sudah terbaru
+        if repo_version == new_version:
+            print(f"{app_url} is latest version")
+        else:
+            # Update app ke versi terbaru
+            print(f"Updating {app_url} {new_version}:")
+            try:
+                download(new_download_url, new_app_path)
+            # Kalau gagal skip app tersebut
+            except RuntimeError as err:
+                print(f"\nDownload failed for {app_url}: {err}, skipping...")
                 continue
 
-            url_type = data_repo[app_url]["url_type"]
-            new_version = new_data["version"]
-            new_download_url = new_data["download_url"]
-            new_app_name = new_data["app_name"]
-            new_app_path = new_data["app_path"]
+            # Hapus appimage lama
+            remove_appimage(data_repo[app_url]["app_path"])
 
-            # Cek jika versi app sudah terbaru
-            if repo_version == new_version:
-                print(f"{app_url} is latest version")
-            else:
-                # Update app ke versi terbaru
-                print(f"Updating {app_url} {new_version}:")
-                try:
-                    download(new_download_url, new_app_path)
-                # Kalau gagal skip app tersebut
-                except RuntimeError as err:
-                    print(f"Download failed for {app_url}: {err}, skipping...\n")
-                    continue
+            # Hapus desktop entry lama
+            remove_desktop_entry(data_repo[app_url]["desktop_path"])
 
-                # Hapus appimage lama
-                remove_appimage(data_repo[app_url]["app_path"])
+            # Atur agar appimage menjadi executable
+            make_executable(new_app_path)
 
-                # Hapus desktop entry lama
-                remove_desktop_entry(data_repo[app_url]["desktop_path"])
+            # Ambil data desktop dan icon dari appimage
+            app_data_path = extract_data_appimage(new_app_path)
+            desktop_path = app_data_path["desktop_path"]
+            icon_path = app_data_path["icon_path"]
 
-                # Atur agar appimage menjadi executable
-                make_executable(new_app_path)
-
-                # Ambil data desktop dan icon dari appimage
-                app_data_path = extract_data_appimage(new_app_path)
-                desktop_path = app_data_path["desktop_path"]
-                icon_path = app_data_path["icon_path"]
-
-                record = types.AppRecord(
-                    url_type=url_type,
-                    app_name=new_app_name,
-                    app_path=new_app_path,
-                    version=new_version,
-                    download_url=new_download_url,
-                    desktop_path=desktop_path,
-                    icon_path=icon_path,
-                )
-                # Update repository data
-                update_repository(app_url, record)
+            record = types.AppRecord(
+                url_type=url_type,
+                app_path=new_app_path,
+                version=new_version,
+                download_url=new_download_url,
+                desktop_path=desktop_path,
+                icon_path=icon_path,
+            )
+            # Update repository data
+            update_repository(app_url, record)
 
     print("\nUpdate all application finished")

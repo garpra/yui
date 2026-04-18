@@ -12,18 +12,23 @@ def list_app(args):
     app_list = get_list_app()
 
     # Cek jika app kosong
-    if not app_list:
+    if not app_list["github_app"] and not app_list["local_app"]:
         print("No applications found")
         return
 
     print("Installed app:")
 
     # Print github app
-    print("Github App:")
-    for app_url in app_list["github_app"]:
-        print(app_url)
+    if app_list["github_app"]:
+        print(">> Github App:")
+        for app_url in app_list["github_app"]:
+            print(f"- {app_url}")
+
+    if app_list["github_app"] and app_list["local_app"]:
+        print()
 
     # Print local app
-    print("\nLocal App:")
-    for app_url in app_list["local_app"]:
-        print(app_url)
+    if app_list["local_app"]:
+        print(">> Local App:")
+        for app_url in app_list["local_app"]:
+            print(f"- {app_url}")

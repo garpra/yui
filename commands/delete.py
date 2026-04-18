@@ -18,14 +18,14 @@ def delete_app(args):
 
     # Cek jika app tidak ada
     if app_url not in data:
-        print("Application is not installed and cannot be removed")
+        print("\nApplication is not installed and cannot be removed")
         return
 
     app_path = data[app_url]["app_path"]
     desktop_path = data[app_url]["desktop_path"]
     icon_path = data[app_url]["icon_path"]
 
-    print(f"Found {app_url}\n\nDeleting app...")
+    print(f"\nFound {app_url}, Deleting app...")
 
     # Hapus icon path jika ada
     remove_icon(icon_path)

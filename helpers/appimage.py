@@ -20,7 +20,6 @@ def remove_icon(icon_path: str) -> None:
     """
     # Cek jika icon_path kosong
     if not icon_path:
-        print("Kok gak ada iconnya")
         return
 
     # Cek jika app path ada
