@@ -2,7 +2,7 @@ from helpers.repository import read_repository, remove_repository
 from helpers.appimage import remove_appimage, remove_desktop_entry, remove_icon
 
 
-def delete_app(args):
+def remove_app(args):
     """
     Hapus aplikasi AppImage yang terinstal dari sistem.
 

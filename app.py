@@ -3,7 +3,7 @@ import re
 from commands.install import install_app
 from commands.list import list_app
 from commands.update import update_app
-from commands.delete import delete_app
+from commands.remove import remove_app
 
 
 def url_type(url: str) -> dict:
@@ -64,12 +64,12 @@ def main():
     update_cmd = subparser.add_parser("update", help="Update all app from repository")
     update_cmd.set_defaults(func=update_app)
 
-    # Subcommand delete
-    delete_cmd = subparser.add_parser("delete", help="Delete app from system")
-    delete_cmd.add_argument(
+    # Subcommand remove
+    remove_cmd = subparser.add_parser("remove", help="Remove app from system")
+    remove_cmd.add_argument(
         "url_data", help="Format: owner/repo or AppImage", type=url_type
     )
-    delete_cmd.set_defaults(func=delete_app)
+    remove_cmd.set_defaults(func=remove_app)
 
     # Mengambil seluruh parser dari input
     args = parser.parse_args()

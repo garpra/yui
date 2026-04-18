@@ -8,7 +8,6 @@ Yui is a CLI (Command Line Interface) tool designed to manage AppImage applicati
 - **Desktop Integration** - Automatically extracts `.desktop` files and icons so applications appear in your application launcher.
 - **Bulk Updates** - Update all installed AppImage applications with a single command.
 - **Local Repo Management** - Stores application metadata in a local repository (JSON) for version tracking.
-- **Security** - GitHub URL validation and file locking for safe operations.
 
 ## Technology Stack
 
@@ -127,7 +126,7 @@ python app.py update
 Uninstall a managed application:
 
 ```bash
-python app.py delete owner/repo
+python app.py remove owner/repo
 ```
 
 ## Data & Directories
@@ -139,7 +138,7 @@ Yui stores its data in `~/.local/share/yui/` (customizable via the `YUI_DATA_DIR
 | `~/.local/share/yui/appimage/`  | Downloaded AppImage files                 |
 | `~/.local/share/yui/repos.json` | Metadata for installed applications       |
 | `~/.local/share/applications/`  | `.desktop` files (Linux menu integration) |
-| `~/.local/share/icons/yui/`     | Application icons                         |
+| `~/.local/share/icons/`         | Application icons                         |
 
 ## Testing
 
