@@ -30,7 +30,7 @@ def update_app(args):
     list_app = get_list_app()
     # Cek jika list data kosong
     if not list_app:
-        print("\nNo application is installed")
+        print(" No application is installed")
         return
 
     # Ambil semua data dari repo
@@ -55,15 +55,15 @@ def update_app(args):
 
         # Cek jika versi app sudah terbaru
         if repo_version == new_version:
-            print(f"{app_url} is latest version")
+            print(f" {app_url} is latest version")
         else:
             # Update app ke versi terbaru
-            print(f"Updating {app_url} {new_version}:")
+            print(f":: Updating {app_url} {new_version}:")
             try:
                 download(new_download_url, new_app_path)
             # Kalau gagal skip app tersebut
             except RuntimeError as err:
-                print(f"\nDownload failed for {app_url}: {err}, skipping...")
+                print(f"Download failed for {app_url}: {err}, skipping...")
                 continue
 
             # Hapus appimage lama
@@ -91,4 +91,4 @@ def update_app(args):
             # Update repository data
             update_repository(app_url, record)
 
-    print("\nUpdate all application finished")
+    print(":: Update all application finished")

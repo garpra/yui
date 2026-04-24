@@ -19,7 +19,7 @@ def install_app(args):
     url_type = args.url_data["url_type"]
     app_url = args.url_data["url"]
 
-    print(f"Search info AppImage for: {app_url}")
+    print(f":: Search info AppImage for: {app_url}")
 
     results: types.ReleaseData
 
@@ -30,11 +30,11 @@ def install_app(args):
         # Ambil data versi terbaru dari repo
         results = fetch_latest_release(app_url)
     else:
-        raise ValueError(f"\nUnsupported url type: {url_type}")
+        raise ValueError(f"Unsupported url type: {url_type}")
 
     # Cek jika ambil data success
     if not results["success"]:
-        print(f"\nFailed: {results['status']}")
+        print(f"Failed: {results['status']}")
         return
 
     app_path = results["app_path"]
@@ -43,7 +43,7 @@ def install_app(args):
 
     # Cek jika appimage sudah ada dan versi terbaru
     if os.path.exists(app_path):
-        print(f"{app_url} has been downloaded and is the latest version")
+        print(f" {app_url} has been downloaded and is the latest version")
         return
 
     # Download AppImage sesuai dengan url dan path
@@ -73,4 +73,4 @@ def install_app(args):
     # Update repository data
     update_repository(app_url, record)
 
-    print(f"\nInstal {app_url} successfully")
+    print(f":: Instal {app_url} successfully")

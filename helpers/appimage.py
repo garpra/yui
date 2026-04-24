@@ -26,7 +26,7 @@ def remove_icon(icon_path: str) -> None:
     if os.path.exists(icon_path):
         os.remove(icon_path)
     else:
-        print("File already deleted")
+        print(" File already deleted")
 
 
 def remove_appimage(app_path: str) -> None:
@@ -37,7 +37,7 @@ def remove_appimage(app_path: str) -> None:
     if os.path.exists(app_path):
         os.remove(app_path)
     else:
-        print("File already deleted")
+        print(" File already deleted")
 
 
 def find_icon(name: str) -> list[str]:
@@ -116,7 +116,7 @@ def remove_desktop_entry(desktop_path: str) -> None:
     if os.path.exists(desktop_path):
         os.remove(desktop_path)
     else:
-        print("Desktop Entry already deleted")
+        print(" Desktop Entry already deleted")
 
 
 def make_executable(app_path: str) -> None:
@@ -158,6 +158,9 @@ def extract_data_appimage(app_path: str) -> types.AppPathData:
     proc = subprocess.Popen(
         [app_path, "--appimage-mount"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
+
+    if proc.stdout is None:
+        raise RuntimeError("Proccess failed")
 
     # Ambil path mount dari command yang sudah dijalankan
     mount_app = proc.stdout.readline().decode().strip()

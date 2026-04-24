@@ -14,7 +14,7 @@ def print_progress(downloaded: int, total: int) -> None:
     # Jika total ukuran tidak diketahui
     if total == 0:
         # Tampilkan jumlah data yang sudah diunduh dalam KB
-        print(f"\rDownloading... {downloaded / 1024:.1f} KB", end="")
+        print(f"\r Downloading... {downloaded / 1024:.1f} KB", end="")
         return
 
     # Hitung persentase progress (0 - 100)
@@ -24,7 +24,7 @@ def print_progress(downloaded: int, total: int) -> None:
     filled = int(percent / 5)
 
     # Buat string progress bar
-    bar = "█" * filled + "░" * (20 - filled)
+    bar = "●" * filled + "•" * (20 - filled)
 
     # Konversi byte ke kilobyte untuk tampilan yang lebih dibaca
     downloaded_kb = downloaded / 1024
@@ -32,7 +32,7 @@ def print_progress(downloaded: int, total: int) -> None:
 
     # Tulis output ke terminal tanpa pindah baris
     sys.stdout.write(
-        f"\rDownloading [{bar}] {percent:.1f}% ({downloaded_kb:.1f}/{total_kb:.1f} KB)"
+        f"\r Downloading [{bar}] {percent:.1f}% ({downloaded_kb:.1f}/{total_kb:.1f} KB)"
     )
 
     # Memastikan output langsung muncul
