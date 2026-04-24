@@ -19,7 +19,7 @@ def install_app(args):
     url_type = args.url_data["url_type"]
     app_url = args.url_data["url"]
 
-    print(f":: Search info AppImage for: {app_url}")
+    print(f":: Search info AppImage for:")
 
     results: types.ReleaseData
 
@@ -51,7 +51,8 @@ def install_app(args):
     if download_url:
         download(download_url, app_path)
     else:
-        move_local_app(app_path)
+        move_local_app(app_url)
+        app_url = os.path.basename(app_path)
 
     # Atur agar appimage menjadi executable
     make_executable(app_path)

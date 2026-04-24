@@ -19,8 +19,11 @@ def move_local_app(app_url: str) -> None:
     app_base = os.path.basename(app_url)
     dest_path = os.path.join(APPIMAGE_PATH, app_base)
 
+    # Buat folder jika belum ada
+    os.makedirs(APPIMAGE_PATH, exist_ok=True)
+
     # Pindahkan appimage ke path tujuan
-    shutil.move(app_base, dest_path)
+    shutil.move(app_url, dest_path)
 
 
 def fetch_local_app(app_url: str) -> ReleaseData:
